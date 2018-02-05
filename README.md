@@ -7,18 +7,22 @@ AWS가 바이너리 배포를 안 해줘서 어쩔 수 없이 만든 저장소
 #!/bin/bash
 set -eo pipefail
 
-export BIN_ROOT_DIR=/opt/bin
-export BIN_DIR=${BIN_ROOT_DIR}/ssm
+export BIN_ROOT_DIR=/opt/ssm
+export BIN_DIR=${BIN_ROOT_DIR}/bin
 export CONFIG_DIR=/etc/amazon/ssm
+
+mkdir -p ${BIN_ROOT_DIR}
+mkdir -p ${CONFIG_DIR}
 
 if [[ ! -f "${BIN_DIR}/amazon-ssm-agent" ]]; then
     pushd ${BIN_ROOT_DIR}
 
-    /usr/bin/curl --silent -L https://github.com/DailyHotel/amazon-ssm-agent/releases/download/v2.0.805.1/ssm.linux-amd64.tar.gz | tar zx 
+    /usr/bin/curl --silent -L https://github.com/DailyHotel/amazon-ssm-agent/releases/download/v2.0.805.1/ssm.linux-amd64.tar.gz | tar zx
 
     chown -R root:root ssm
     mv -f ssm/amazon-ssm-agent.json $CONFIG_DIR/amazon-ssm-agent.json
     mv -f ssm/seelog_unix.xml $CONFIG_DIR/seelog.xml
+    mv -f ssm bin
 
     popd
 fi
